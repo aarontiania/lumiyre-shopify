@@ -1,0 +1,203 @@
+{%- assign natural_height_ratio = '60%' -%}
+{%- if section.settings.image != blank -%}
+  {%- capture natural_height_ratio -%}{{ 100 | divided_by: section.settings.image.aspect_ratio }}%{% endcapture %}
+{%- endif -%}
+
+{%- style -%}
+    @media only screen and (max-width: 768px) {
+      .background-media-text--{{ section.id }} {
+        background: #FFFFFF;
+      }
+
+      .background-media-text__image {
+        height: 30vh;
+      }
+      
+      .background-media-text__text {
+        background: black;
+        margin: 0;
+      }
+      .background-media-text__aligner{
+        margin:10px;
+        margin-top: -50px;
+      }
+
+      .background-media-text__text, .imgsubheading, .imgh1, .imgrte {
+        color: white;
+      }
+      .btn-text {
+        color:white; 
+        border-bottom: 1px solid white; 
+        transition: all 0.5s ease-out;
+      }
+    }
+    @media only screen and (min-width: 769px) {
+      .background-media-text--{{ section.id }} {
+        height: 0;
+        padding-bottom: {{ natural_height_ratio | plus: section.settings.desktop_size }}%;
+        /* padding-bottom: 0; */
+       height: 650px;
+      }
+      .background-media-text__aligner{
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        font-size: 18px;
+        margin: 0;
+        padding: 0;
+      }
+      .background-media-text__text{
+        background: transparent;
+        padding: 30px 20px;
+      }
+
+      .background-media-text__text, .imgsubheading, .imgh1, .imgrte {
+        color: black;
+      }
+      .btn-text {
+       color:black; 
+        border-bottom: 1px solid black; 
+        transition: all 0.5s ease-out;
+      }
+    }
+{%- endstyle -%}
+
+<div
+  class="background-media-text background-media-text--{{ section.id }} loaded"
+  data-aos="background-media-text__animation"
+>
+  <div 
+    class="background-media-text__image"
+  >
+    {% comment %} Full width image so don't need to adjust sizes attribute, fallback is 100vw {% endcomment %}
+    {% if section.settings.image != blank %}
+      {%-
+        render 'image-element',
+        img: section.settings.image,
+        img_width: 2400,
+        loading: section.settings.lazyload_images,
+        classes: classes,
+      -%}
+    {% else %}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {% endif %}
+  </div>
+  {%- if section.settings.subtitle != blank or section.settings.title != blank or section.settings.text != blank -%}
+    <div 
+      class="background-media-text__inner"
+    >
+      <div class="background-media-text__aligner background-media-text--{{ section.settings.layout }}">
+        <div class="background-media-text__text" >
+          {%- if section.settings.subtitle != blank -%}
+            <div class="imgsubheading appear-delay{% cycle '','-1','-2','-3','-4' %}">{{ section.settings.subtitle }}</div>
+          {%- endif -%}
+          {%- if section.settings.title != blank -%}
+            <h2 class="imgh1 appear-delay{% cycle '','-1','-2','-3','-4' %}">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <div class="imgrte appear-delay{% cycle '','-1','-2','-3','-4' %}">{{ section.settings.text }}</div>
+          {%- endif -%}
+          {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+            <a
+              href="{{ section.settings.button_link }}"
+              class="btn-text appear-delay{% cycle '','-1','-2','-3','-4' %}"
+              onMouseOver="this.style.opacity=0.5"
+              onMouseOut="this.style.opacity=1"
+            >
+              {{ section.settings.button_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "MARTYRE BOTTOM LEFT",
+  "class": "index-section--flush",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "t:sections.background-image-text.settings.subtitle.label"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.background-image-text.settings.title.label",
+      "default": "Large image with text box"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.background-image-text.settings.text.label",
+      "default": "<p>Pair large text with a full-width image to draw attention to an important detail of your brand or product line.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.background-image-text.settings.button_label.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.background-image-text.settings.button_link.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.background-image-text.settings.image.label"
+    },
+    {
+      "type": "range",
+      "id": "desktop_size",
+      "label": "t:sections.background-image-text.settings.desktop_size.label",
+      "default": 0,
+      "min": -100,
+      "max": 100,
+      "step": 10,
+      "unit": "%"
+    },
+    {
+      "type": "color",
+      "id": "color_border",
+      "label": "t:sections.background-image-text.settings.color_border.label",
+      "info": "t:sections.background-image-text.settings.color_border.info",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:sections.background-image-text.settings.layout.label",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.background-image-text.settings.layout.options.left.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.background-image-text.settings.layout.options.right.label"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "lazyload_images",
+      "label": "t:common.lazyload_images.label",
+      "info": "t:common.lazyload_images.info",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "MARTYRE BOTTOM LEFT"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  }
+}
+{% endschema %}
